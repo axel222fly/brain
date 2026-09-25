@@ -11,8 +11,35 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+      - name: Select Xcode and verify
+        run: |
+          ls /Applications/ | grep Xcode
+          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer || \
+          sudo xcode-select -s /Applications/Xcode_15.3.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Configure Git for CI
+        run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git config --global http.postBuffer 524288000
+          git config --global http.lowSpeedLimit 0
+          git config --global http.lowSpeedTime 999999
+          git config --global advice.detachedHead false
+
+      - name: Diagnose project structure
+        run: |
+          ls -la
+          find . -name "*.xcodeproj" -maxdepth 2
+          xcodebuild -project Sal.xcodeproj -list
+
+      - name: Resolve Swift Package Dependencies
+        env:
+          SWIFTPM_DISABLE_DEPENDENCY_CACHE: 1
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -scmProvider system \
+            -project Sal.xcodeproj \
+            -scheme Sal
 
       - name: Build Unsigned iOS Archive
         run: |
@@ -43,8 +70,35 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+      - name: Select Xcode and verify
+        run: |
+          ls /Applications/ | grep Xcode
+          sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer || \
+          sudo xcode-select -s /Applications/Xcode_15.3.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Configure Git for CI
+        run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git config --global http.postBuffer 524288000
+          git config --global http.lowSpeedLimit 0
+          git config --global http.lowSpeedTime 999999
+          git config --global advice.detachedHead false
+
+      - name: Diagnose project structure
+        run: |
+          ls -la
+          find . -name "*.xcodeproj" -maxdepth 2
+          xcodebuild -project Sal.xcodeproj -list
+
+      - name: Resolve Swift Package Dependencies
+        env:
+          SWIFTPM_DISABLE_DEPENDENCY_CACHE: 1
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -scmProvider system \
+            -project Sal.xcodeproj \
+            -scheme Sal
 
       - name: Build macOS App
         run: |
@@ -52,10 +106,10 @@ jobs:
             -scheme Sal \
             -configuration Release \
             -sdk macosx \
-            -derivedDataPath $RUNNER_TEMP/DerivedData \
             build \
             CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO
+            CODE_SIGNING_REQUIRED=NO \
+            -verbose
 
       - name: Package .app Bundle
         run: |
