@@ -16,11 +16,11 @@ jobs:
 
       - name: Build Unsigned iOS Archive
         run: |
-          xcodebuild -project Sal.xcodeproj \
+          xcodebuild -project brain.xcodeproj \
             -scheme Sal \
             -configuration Release \
             -sdk iphoneos \
-            -archivePath $RUNNER_TEMP/Sal.xcarchive \
+            -archivePath $RUNNER_TEMP/brain.xcarchive \
             archive \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO
@@ -48,7 +48,7 @@ jobs:
 
       - name: Build macOS App
         run: |
-          xcodebuild -project Sal.xcodeproj \
+          xcodebuild -project brain.xcodeproj \
             -scheme Sal \
             -configuration Release \
             -sdk macosx \
