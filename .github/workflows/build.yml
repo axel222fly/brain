@@ -75,7 +75,8 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: sal-ios-ipa
-          path: $RUNNER_TEMP/Sal-unsigned.ipa
+          path: ${{ runner.temp }}/Sal-unsigned.ipa
+          if-no-files-found: error
 
   build-macos:
     runs-on: macos-14
@@ -134,15 +135,9 @@ jobs:
           echo "=== Contents of Release folder ==="
           ls -la $RUNNER_TEMP/DerivedData/Build/Products/Release/ || echo "Release folder not found"
 
-      - name: Package .app Bundle
-        run: |
-          mkdir -p $RUNNER_TEMP/Sal.app
-          cp -r $RUNNER_TEMP/DerivedData/Build/Products/Release/Sal.app $RUNNER_TEMP/
-          echo "=== Packaged Sal.app ==="
-          ls -la $RUNNER_TEMP/
-
       - name: Upload macOS App Artifact
         uses: actions/upload-artifact@v7
         with:
           name: sal-macos-app
-          path: $RUNNER_TEMP/Sal.app
+          path: ${{ runner.temp }}/DerivedData/Build/Products/Release/Sal.app
+          if-no-files-found: error
