@@ -101,15 +101,17 @@ jobs:
             -scheme Sal
 
       - name: Build macOS App
-        run: |
-          xcodebuild -project Sal.xcodeproj \
-            -scheme Sal \
-            -configuration Release \
-            -sdk macosx \
-            build \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            -verbose
+              - name: Build macOS App
+              run: |
+                xcodebuild -project Sal.xcodeproj \
+                  -scheme Sal \
+                  -configuration Release \
+                  -sdk macosx \
+                  -derivedDataPath $RUNNER_TEMP/DerivedData \
+                  build \
+                  CODE_SIGNING_ALLOWED=NO \
+                  CODE_SIGNING_REQUIRED=NO \
+                  -verbose
 
       - name: Package .app Bundle
         run: |
